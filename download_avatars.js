@@ -5,18 +5,23 @@ var fs = require('fs');
 
 console.log('Welcome to the GitHub Avatar Downloader!');
 
-function getRepoContributors(repoOwner, repoName, cb) {
-  var options = {
-    url: "https://api.github.com/repos/" + repoOwner + "/" + repoName + "/contributors",
-    headers: {
-      'User-Agent': 'request',
-      'Authorization': 'token ' + secrets.GITHUB_TOKEN
-    }
+// console.log("X", process.argv[2]);
+// console.log("X", process.argv[3]);
 
+function getRepoContributors(/*repoOwner, repoName, cb*/) {
+
+  let owner = process.argv[2];
+  let name = process.argv[3];
+  if (name && owner) {
+    var options = {
+      url: "https://api.github.com/repos/" + owner + "/" + name + "/contributors",
+      headers: {
+        'User-Agent': 'request',
+        'Authorization': 'token ' + secrets.GITHUB_TOKEN
+    }
   };
 
   request(options, function(err, res, body) {
-
     if (err) console.log('error has occured');
     // parse the JSON string into an object
     let parsed = JSON.parse(body);
@@ -30,10 +35,10 @@ function getRepoContributors(repoOwner, repoName, cb) {
 // pass this object (an array of contributor objects) to the cb function
 // modify the callback function to iterate over results and
 // console.log the value for each avatar_url
-    //cb(err, result);
-
-
   });
+    } else {
+      console.log("We require both an owner and name value")
+  }
 }
 
 function downloadImageByURL(url, filePath) {
@@ -52,7 +57,7 @@ function downloadImageByURL(url, filePath) {
 
 // downloadImageByURL("https://avatars2.githubusercontent.com/u/2741?v=3&s=466", "avatars/kvirani.jpg");
 
-getRepoContributors("jquery", "jquery")
+getRepoContributors();
   // console.log("errors:", err);
   // console.log("result:", result);
 
